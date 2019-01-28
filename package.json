@@ -1,0 +1,28 @@
+{
+  "name": "claimhub",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mushroom0117/ClaimHub.git"
+  },
+  "author": "mushroom0117",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mushroom0117/ClaimHub/issues"
+  },
+  "homepage": "https://github.com/mushroom0117/ClaimHub#readme",
+  "dependencies": {
+    "@babel/runtime": "^7.3.1",
+    "evm-lite-lib": "^0.1.18"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.15.0"
+  }
+}
