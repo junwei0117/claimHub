@@ -2,7 +2,7 @@ const { EVMLC } = require('evm-lite-lib');
 const { DataDirectory } = require('evm-lite-lib');
 
 // Default from address
-const from = '0x83B150E3D355B65AA443EBE19327AD368086D649';
+const from = '0X3CECAA0F2A6054022320A7C4C0C229A8D9062244';
 
 // EVMLC object
 const evmlc = new EVMLC('210.240.162.43', 8080, {
@@ -18,7 +18,11 @@ const password = 'password';
 // Contract Object
 const contractPath = 'contract/claimhub.sol';
 const contractName = 'claimHub';
-const contractAddress = '0x1b7d22445c409e82b274fa98339c395cc5c27a3f';
+const contractAddress = '0x7ee1d718810015129cb09ccf0cc33753f04cf4ad';
+
+// Claim Object
+const claimOwner = 'Ender';
+const claimContent = 'SZ9BFDNKYEPJPFNTDZWLMAKNXBCDUFUIXUIKA9GRYPYTTNCNKEWBBVPJXMLD9QPOHRXHMPRKLSBGMIHRL';
 
 // Get keystore object from the keystore directory
 // For the from address so we can decrypt and sign
@@ -38,18 +42,16 @@ const generateContract = async () => {
 };
 
 const setClaim = async (account, cfContract) => {
-  const claimOwner = 'Junwei';
-  const claimContent = 'SZ9BFDNKYEPJPFNTDZWLMAKNXBCDUFUIXUIKA9GRYPYTTNCNKEWBBVPJXMLD9QPOHRXHMPRKLSBGMIHRL';
   const transaction = await cfContract.methods.setClaim(claimOwner, claimContent);
   await transaction.sign(account);
   await transaction.submit();
-  return transaction.receipt;
+  return transaction;
 };
 
 const demo = async () => {
   const account = await accountDecrypt();
   const cfContract = await generateContract();
-  const response = setClaim(account, cfContract);
+  const response = await setClaim(account, cfContract);
   return response;
 };
 
