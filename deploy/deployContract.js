@@ -29,14 +29,14 @@ const accountDecrypt = async () => {
 // Generate contract object with ABI and data
 const generateContract = async () => {
   const compiled = await evmlc.compileContract(contractName, contractPath);
-  const contract = await evmlc.loadContract(compiled.abi, { data: compiled.data });
+  const contract = await evmlc.loadContract(compiled.abi, { data: compiled.bytecode });
   return contract;
 };
 
 const deployContract = async () => {
   const account = await accountDecrypt();
   const contract = await generateContract();
-  const response = contract.deploy(account);
+  const response = await contract.deploy(account);
   return response;
 };
 

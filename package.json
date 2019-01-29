@@ -17,8 +17,7 @@
   },
   "homepage": "https://github.com/mushroom0117/ClaimHub#readme",
   "dependencies": {
-    "@babel/runtime": "^7.3.1",
-    "evm-lite-lib": "^0.1.18"
+    "evm-lite-lib": "^0.1.19"
   },
   "devDependencies": {
     "eslint": "^5.12.1",
