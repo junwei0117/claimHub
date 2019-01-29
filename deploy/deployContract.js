@@ -30,7 +30,7 @@ const accountDecrypt = async () => {
 const generateContract = async () => {
   const compiled = await evmlc.compileContract(contractName, contractPath);
   const contract = await evmlc.loadContract(compiled.abi, {
-    data: compiled.bytecode
+    data: compiled.bytecode,
   });
   return contract;
 };
