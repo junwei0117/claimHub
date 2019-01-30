@@ -1,20 +1,20 @@
 pragma solidity ^0.4.24;
 
 contract claimHub {
-    mapping(string => User) users;
+    mapping(string => Claim) claims;
 
-    struct User{
+    struct Claim{
         string owner;
-        string[] claim;
+        string claimContent;
     }
 
-    function setClaim(string _owner, string _claim) public {
-        users[_owner].owner = _owner;
-        users[_owner].claim.push(_claim);
+    function setClaim(string _owner, string _claimContent) public {
+        claims[_owner].owner = _owner;
+        claims[_owner].claimContent = _claimContent;
     }
 
-    function getClaim(string _owner, uint256 _claimIndex) public view returns (string) {
-        return users[_owner].claim[_claimIndex];
+    function getClaim(string _owner) public view returns (string) {
+        return claims[_owner].claimContent;
     }
 
 }
