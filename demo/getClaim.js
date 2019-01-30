@@ -1,6 +1,4 @@
 const { EVMLC } = require('evm-lite-lib');
-const { DataDirectory } = require('evm-lite-lib');
-const { BN } = require('web3-utils');
 
 const solc = require('solc');
 const fs = require('fs');
@@ -15,21 +13,10 @@ const evmlc = new EVMLC('210.240.162.43', 8080, {
   gasPrice: 0,
 });
 
-// Keystore object
-const dataDirectory = new DataDirectory('/Users/junwei/.evmlc');
-const password = 'password';
-
 // Contract Object
 const rawContractName = 'claimHub';
 const contractPath = 'contract/claimhub.sol';
 const contractAddress = '0xda22aa6ee1a8cce03837600d8a235f5a099c3ee7';
-
-// Get keystore object from the keystore directory
-// For the from address so we can decrypt and sign
-const accountDecrypt = async () => {
-  const account = await dataDirectory.keystore.decryptAccount(from, password);
-  return account;
-};
 
 // Generate contract object with ABI and data
 const loadContract = async () => {
@@ -46,13 +33,11 @@ const loadContract = async () => {
 };
 
 const getClaim = async () => {
-  const account = await accountDecrypt();
   const contract = await loadContract();
 
   const claimOwner = 'Junwei';
 
   const transaction = await contract.methods.getClaim(claimOwner);
-  await transaction.sign(account);
   const claimContent = await transaction.call();
   return claimContent;
 };
