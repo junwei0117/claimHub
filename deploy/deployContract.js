@@ -8,7 +8,7 @@ const fs = require('fs');
 const from = '0X11F61F522EDB273C4CC21F517BB1F0039B4671D0';
 
 // EVMLC object
-const evmlc = new EVMLC('210.240.162.43', 8080, {
+const evmlc = new EVMLC('127.0.0.1', 8080, {
   from,
   gas: 1000000,
   gasPrice: 0,
