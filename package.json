@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/mushroom0117/ClaimHub#readme",
   "dependencies": {
-    "evm-lite-lib": "^0.1.22",
+    "evm-lite-lib": "^0.1.23",
     "solc": "^0.4.25"
   },
   "devDependencies": {

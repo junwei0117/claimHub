@@ -5,7 +5,7 @@ const solc = require('solc');
 const fs = require('fs');
 
 // Default from address
-const from = '0X3CECAA0F2A6054022320A7C4C0C229A8D9062244';
+const from = '0X11F61F522EDB273C4CC21F517BB1F0039B4671D0';
 
 // EVMLC object
 const evmlc = new EVMLC('210.240.162.43', 8080, {
@@ -21,7 +21,7 @@ const password = 'password';
 // Contract Object
 const rawContractName = 'claimHub';
 const contractPath = 'contract/claimhub.sol';
-const contractAddress = '0x1e3455c6bb17d4c54b972103f47eaba6c9b51480';
+const contractAddress = '0xd516362ff674a55d7e91fa746ff0350bc1b0b567';
 
 // Get keystore object from the keystore directory
 // For the from address so we can decrypt and sign
