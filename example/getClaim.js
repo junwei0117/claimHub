@@ -53,7 +53,6 @@ const getClaim = async () => {
   const transaction = await contract.methods.getClaim(claimOwner);
   await transaction.sign(account);
   const claimContent = await transaction.submit();
-  console.log(transaction);
   return claimContent;
 };
 
