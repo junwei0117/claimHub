@@ -36,8 +36,8 @@ const loadContract = async () => {
   const contractName = `:${rawContractName}`;
   const compiledOutput = solc.compile(contractFile, 1);
   const data = compiledOutput.contracts[contractName].bytecode;
-  const ABI = JSON.parse(compiledOutput.contracts[contractName].interface);
-  const contract = await evmlc.loadContract(ABI, {
+  const abi = JSON.parse(compiledOutput.contracts[contractName].interface);
+  const contract = await evmlc.loadContract(abi, {
     data,
     contractAddress,
   });
