@@ -9,7 +9,7 @@ class ClaimHub {
   }
 
   async setClaim(owner, claimContent) {
-    const transaction = await this.contract.setClaim(owner, claimContent);
+    const transaction = await this.contract.methods.setClaim(owner, claimContent);
 
     await transaction.submit({}, this.account);
 
@@ -19,7 +19,7 @@ class ClaimHub {
   }
 
   async getClaim(owner) {
-    const transaction = await this.contract.getClaim(owner);
+    const transaction = await this.contract.methods.getClaim(owner);
 
     const response = await transaction.submit({}, this.account);
 
