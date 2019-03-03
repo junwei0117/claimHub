@@ -5,7 +5,9 @@ class ClaimHub {
   }
 
   async deploy() {
-    await this.contract.deploy(this.account);
+    const response = await this.contract.deploy(this.account);
+
+    return response;
   }
 
   async setClaim(owner, claimContent) {
