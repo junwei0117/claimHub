@@ -1,23 +1,27 @@
 const path = require('path');
 const os = require('os');
+const solc = require('solc');
+const fs = require('fs');
 
 const { EVMLC, DataDirectory } = require('evm-lite-lib');
 
-const compile = require('./classes/compile');
-const ClaimHub = require('./classes/ClaimHub');
-
 let evmlc;
-let claimHub;
+let contract;
+let account;
+
+const errorLog = (text) => {
+  console.log(`\x1b[31m${text}\x1b[0m`);
+};
 
 const initEVMConnection = async () => {
   try {
-    evmlc = new EVMLC('evm0.capjupiter.com', 8080, {
+    evmlc = new EVMLC('node0.capjupiter.com', 8080, {
       from: '0X3F9D41ECEA757FC4E2B44BE3B38A788DE2F11AD7',
       gas: 100000000,
       gasPrice: 0,
     });
   } catch (error) {
-    console.log(`\x1b[31m${error}\x1b[0m\n`);
+    errorLog(error);
   }
 };
 
@@ -28,62 +32,70 @@ const assignEvmlcDirectory = () => {
   return evmlcDirectory;
 };
 
+const compile = (contractName, fileName) => {
+  const contractPath = path.join(
+    path.resolve(__dirname),
+    `./contract/${fileName}.sol`,
+  );
+  const contractFile = fs.readFileSync(contractPath, 'utf8');
+  const compiledOutput = solc.compile(contractFile, 1);
+
+  return {
+    bytecode: compiledOutput.contracts[`:${contractName}`].bytecode,
+    abi: JSON.parse(compiledOutput.contracts[`:${contractName}`].interface),
+  };
+};
+
 const decryptAccount = async (password, evmlcDirectory) => {
   try {
-    const account = await evmlcDirectory.keystore.decryptAccount(
+    account = await evmlcDirectory.keystore.decryptAccount(
       evmlc.defaultFrom,
       password,
     );
     return account;
   } catch (error) {
-    console.log(`\x1b[31m${error}\x1b[0m\n`);
+    errorLog(error);
   }
 };
 
 const loadContract = async (contractName, filename) => {
   try {
-    const compiled = await compile.compile(contractName, filename);
-    const contract = await evmlc.contracts.load(compiled.abi, {
+    const compiled = await compile(contractName, filename);
+    contract = await evmlc.contracts.load(compiled.abi, {
       data: compiled.bytecode,
     });
-    return contract;
   } catch (error) {
-    console.log(`\x1b[31m${error}\x1b[0m\n`);
-  }
-};
-
-const genClaimHubClass = (contract, account) => {
-  try {
-    claimHub = new ClaimHub.ClaimHub(contract, account);
-  } catch (error) {
-    console.log(`\x1b[31m${error}\x1b[0m\n`);
+    errorLog(error);
   }
 };
 
 const deploySmartContract = async () => {
   try {
-    const responce = await claimHub.deploy();
-    return responce;
+    const response = await contract.deploy(account);
+    return response;
   } catch (error) {
-    console.log(`\x1b[31m${error}\x1b[0m\n`);
+    errorLog(JSON.stringify(error));
   }
 };
 
 const setClaim = async (claimOwner, claimContent) => {
   try {
-    const responce = await claimHub.setClaim(claimOwner, claimContent);
-    return responce;
+    const transaction = await contract.methods.setClaim(claimOwner, claimContent);
+    await transaction.submit({}, account);
+    const receipt = await transaction.receipt;
+    return receipt;
   } catch (error) {
-    console.log(`\x1b[31m${error}\x1b[0m\n`);
+    errorLog(error);
   }
 };
 
 const getClaim = async (claimOwner) => {
   try {
-    const responce = await claimHub.getClaim(claimOwner);
-    return responce;
+    const transaction = await contract.methods.getClaim(claimOwner);
+    const response = await transaction.submit({}, account);
+    return response;
   } catch (error) {
-    console.log(`\x1b[31m${error}\x1b[0m\n`);
+    errorLog(error);
   }
 };
 
@@ -108,7 +120,7 @@ const demo = async () => {
 
   // Step3
   const password = 'password';
-  const account = await decryptAccount(password, evmlcDirectory);
+  await decryptAccount(password, evmlcDirectory);
   console.log(
     'Step 3 ) \n'
     + 'Get account from keystore and decrypt the account.\n'
@@ -119,8 +131,7 @@ const demo = async () => {
   // Step 4
   const contractName = 'claimHub';
   const filename = 'claimHub';
-  const contract = await loadContract(contractName, filename);
-  await genClaimHubClass(contract, account);
+  await loadContract(contractName, filename);
   console.log(
     '\n'
     + 'Step 4 ) \n'
@@ -132,7 +143,7 @@ const demo = async () => {
   console.log(contract);
 
   // Step 5
-  const receipt = await deploySmartContract();
+  const receipt = await deploySmartContract(account);
   console.log(
     '\n'
   + 'Step 5 ) \n'
@@ -147,23 +158,23 @@ const demo = async () => {
   // Step 6
   const claimOwner = 'Junwei';
   const claimContent = 'SZ9BFDNKYEPJPFNTDZWLMAKNXBCDUFUIXUIKA9GRYPYTTNCNKEWBBVPJXMLD9QPOHRXHMPRKLSBGMIHRL';
-  const setResponce = await setClaim(claimOwner, claimContent);
+  const setResponse = await setClaim(claimOwner, claimContent);
   console.log(
     '\n'
   + 'Step 6 ) \n'
   + 'We created an EVM transaction to call the setClaim method of the SmartContract. \n'
   + 'This will create a combination of claims in the contract, \n'
   + 'in this claim will explain the ownership of the claim and the corresponding content.\n'
-  + 'Transaction Responce : ',
+  + 'Transaction Response : ',
   );
-  console.log(setResponce);
+  console.log(setResponse);
 
   // Step 7
-  const getResponce = await getClaim(claimOwner);
+  const getResponse = await getClaim(claimOwner);
   console.log(
     '\n'
   + 'Step 7 ) \n'
-  + `Junwei's claim content : ${getResponce}`,
+  + `Junwei's claim content : ${getResponse}`,
   );
 };
 
