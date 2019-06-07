@@ -3,11 +3,13 @@ const os = require('os');
 const solc = require('solc');
 const fs = require('fs');
 
-const { EVMLC, DataDirectory } = require('evm-lite-lib');
+const { EVMLC } = require('evm-lite-lib');
 
 let evmlc;
 let contract;
 let account;
+
+const keystore = {"version":3,"id":"caa7dbce-d0a1-4aa3-9e0e-065d68480f03","address":"9df71212463f4f357ca6b0fb0ad532f06474b5ad","crypto":{"ciphertext":"72d852c0b6a0eafe405df193198ded9666f2fa827a836a668809e09fe285c8ec","cipherparams":{"iv":"1583eb3a1aa771288597b8fc0fa174d7"},"cipher":"aes-128-ctr","kdf":"scrypt","kdfparams":{"dklen":32,"salt":"7025c7a659d692b21d11fb1bfcaac2b0858bb6af4c8df78f1baa934188574935","n":8192,"r":8,"p":1},"mac":"051e1d9cf39ec6d92f3315c8a70a3e47daedd3c139cd1e06e8c8830544f9c2ee"}};
 
 const errorLog = (text) => {
   console.log(`\x1b[31m${text}\x1b[0m`);
@@ -16,20 +18,13 @@ const errorLog = (text) => {
 const initEVMConnection = async () => {
   try {
     evmlc = new EVMLC('node0.capjupiter.com', 8080, {
-      from: '0X3F9D41ECEA757FC4E2B44BE3B38A788DE2F11AD7',
+      from: '0X9df71212463f4f357ca6b0fb0ad532f06474b5ad',
       gas: 100000000,
       gasPrice: 0,
     });
   } catch (error) {
     errorLog(error);
   }
-};
-
-const assignEvmlcDirectory = () => {
-  const evmlcDirectory = new DataDirectory(
-    path.join(os.homedir(), '.evmlc'),
-  );
-  return evmlcDirectory;
 };
 
 const compile = (contractName, fileName) => {
@@ -46,12 +41,9 @@ const compile = (contractName, fileName) => {
   };
 };
 
-const decryptAccount = async (password, evmlcDirectory) => {
+const decryptAccount = async (password) => {
   try {
-    account = await evmlcDirectory.keystore.decryptAccount(
-      evmlc.defaultFrom,
-      password,
-    );
+    account = await evmlc.accounts.decrypt(keystore, password);
     return account;
   } catch (error) {
     errorLog(error);
@@ -110,7 +102,6 @@ const demo = async () => {
   );
 
   // Step2
-  const evmlcDirectory = await assignEvmlcDirectory();
   console.log(
     'Step 2 ) \n'
     + 'The private keys reside directly on our own device, so we need to specify \n'
@@ -120,7 +111,7 @@ const demo = async () => {
 
   // Step3
   const password = 'password';
-  await decryptAccount(password, evmlcDirectory);
+  await decryptAccount(password);
   console.log(
     'Step 3 ) \n'
     + 'Get account from keystore and decrypt the account.\n'
