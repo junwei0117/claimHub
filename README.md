@@ -15,7 +15,13 @@ npm install
 ### Demo
 
 ```
-$ node index.js
+$ npm run start
+```
+
+or using [yarn](https://yarnpkg.com/):
+
+```
+$ yarn start
 ```
 
 ### Coding style 
